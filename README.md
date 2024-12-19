@@ -243,6 +243,90 @@ These patterns differ fundamentally from Stage as they focus on specific algorit
 4. **Stage as Unique**:  
    The **Stage Design Pattern** offers a unique solution by combining aspects of centralized control (Mediator) with structured message delivery (Observer) while avoiding the pitfalls of global messaging systems (Messaging Center).
 
+### Mathematical Model of the Stage Design Pattern
+
+The **Stage Design Pattern** can be analyzed mathematically using concepts from **graph theory** and **parallel communication**. This section demonstrates the formal model, its properties, and the advantages of Stage over similar approaches.
+
+---
+
+#### **Graph-Based Representation**
+
+The system can be modeled as a **directed graph** \( G = (V, E) \), where:
+
+- \( V \) is the set of nodes (objects in the system):  
+  \( V = S \cup L \), where:
+  - \( S \) = Set of `Speakers` (emitters of messages).
+  - \( L \) = Set of `Listeners` (receivers of messages).
+  - A node can act as both a `Speaker` and a `Listener` (\( S \cap L \neq \emptyset \)).
+
+- \( E \) is the set of directed edges:  
+  \( E = \{ (s, l) \mid s \in S, l \in L_s \} \), where \( L_s \) is the set of listeners subscribed to a speaker \( s \).
+
+- **Stage** acts as a central mapping function:  
+  $$
+  \text{Stage} : S \to \mathcal{P}(L)
+  $$
+  where \( \mathcal{P}(L) \) is the power set of listeners.
+
+---
+
+#### **Properties**
+
+1. **Decoupling (Structural Independence)**  
+   The `Stage` eliminates direct connections between `Speakers` and `Listeners`.  
+   **Formal Definition**:  
+   $$
+   \forall s \in S, \forall l \in L_s : s \text{ does not reference } l \text{ directly, only through its ID}.
+   $$
+
+2. **Parallel Message Delivery**  
+   Messages are delivered asynchronously in parallel to all listeners. The time \( T \) to notify \( n \) listeners is:  
+   $$
+   T_{\text{Stage}} = \max_{l \in L_s} t(s, l),
+   $$
+   where \( t(s, l) \) is the time to deliver a message from a `Speaker` \( s \) to a `Listener` \( l \).  
+   **Result**: The delivery time depends only on the slowest listener, not the sum of all listeners.
+
+3. **Dynamic Scalability**  
+   The `Stage` registry supports the dynamic addition and removal of listeners. Using weak references:  
+   $$
+   \forall l \in L, \ l \notin \text{Heap} \implies (s, l) \notin E.
+   $$
+   This ensures that listeners collected by the garbage collector are automatically removed.
+
+4. **Complexity**  
+   The communication complexity of delivering a message to all listeners is \( O(n) \), where \( n \) is the number of active listeners.  
+   Compared to other models:
+   - **Observer Pattern**: \( O(n \cdot m) \) (subject-observer relationships).
+   - **Messaging Center**: \( O(n^2) \) (global subscriptions).
+   - **Stage**: \( O(n) \) (centralized registry).
+
+---
+
+#### **Comparative Advantage**
+
+| **Model**                  | **Connection Complexity**   | **Scalability**          | **Tolerant to Failures**  |
+|----------------------------|----------------------------|--------------------------|---------------------------|
+| **Observer Pattern**       | \( O(n \cdot m) \): Direct relationships | Limited (tight coupling) | No automatic cleanup      |
+| **Messaging Center**       | \( O(n^2) \): Global relationships  | Moderate (unstructured)  | Not guaranteed            |
+| **Stage Design Pattern**   | \( O(n) \): Centralized registry | High (dynamic listeners) | Yes (using weak references)|
+
+---
+
+### **Mathematical Conclusion**
+
+The **Stage Design Pattern** provides a mathematically robust solution for structured, asynchronous communication by:
+
+1. Reducing the communication complexity to \( O(n) \) through a central registry.
+2. Enabling efficient parallel message delivery, minimizing total delivery time:
+   $$
+   T_{\text{Stage}} = \max_{l \in L_s} t(s, l).
+   $$
+3. Maintaining **decoupling** between `Speakers` and `Listeners` by using an indirect mapping mechanism.
+4. Ensuring system **robustness** with dynamic listener management and garbage collection.
+
+This mathematical model demonstrates that the **Stage Design Pattern** is scalable, efficient, and superior to traditional patterns like Observer and Messaging Center in scenarios requiring structured communication.
+
 ### Summary
 
 The **Stage Design Pattern** introduces a unique and disciplined approach to object communication that overcomes the limitations of existing patterns:
