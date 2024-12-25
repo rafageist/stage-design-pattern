@@ -2,7 +2,7 @@
 
 ## Description
 
-The **Stage Design Pattern** is a behavioral design pattern that introduces a disciplined approach to asynchronous communication between objects. It enforces explicit roles for participants (`Speaker` and `Listener`) and centralizes communication management via a shared "Stage." This pattern promotes scalability, maintainability, and traceability, making it suitable for modern, complex architectures.
+The **Stage Design Pattern** is a behavioral design pattern that introduces a disciplined approach to communication between objects. It enforces explicit roles for participants (`Speaker` and `Listener`) and centralizes communication management via a shared `Stage`. This pattern promotes scalability, maintainability, and traceability, making it suitable for modern, complex architectures.
 
 ---
 
@@ -94,10 +94,47 @@ Word --> ISpeaker : defines message
 
 ### Participants
 
-- **Stage**: The central registry managing listeners and delivering messages from speakers.
-- **IListener**: Interface for classes that can receive and process messages.
-- **ISpeaker**: Interface for classes that emit messages to listeners.
-- **Word**: A validated, immutable message type used in communication.
+#### Stage 
+
+The central registry managing listeners and delivering messages from speakers.
+
+#### Listener
+
+Interface for classes that can receive and process messages.
+
+### Speaker
+
+Interface for classes that emit messages to listeners.
+
+#### Word
+
+In the **Stage Design Pattern**, a **Word** is the smallest unit of communication. It serves as an atomic building block for messages, not the entire message itself. Multiple Words can be combined to construct more complex messages, allowing components to interpret sequences of Words to derive meaning.
+
+##### **Why Restrict Words?**
+
+Is a good practice that the Words are defined with the following constraints:
+- **Alphabetic characters only**: Excluding numbers or symbols.
+- **Uppercase letters**: To enforce uniformity and avoid case-sensitivity issues.
+
+These restrictions ensure:
+- **Consistency**: All components process Words in a predictable way.
+- **Simplicity**: Validation and processing are straightforward.
+- **Scalability**: A restricted vocabulary of Words can grow incrementally.
+
+##### **Abstract Definition vs. Implementation**
+
+The pattern defines Words as an abstract concept, leaving implementation details to developers. This allows flexibility in:
+- Expanding the vocabulary of Words.
+- Combining Words to represent messages.
+- Interpreting Words based on the system’s context.
+
+##### **Benefits of Words**
+
+- **Consistency**: Uniform structure guarantees clarity.
+- **Modularity**: Words can be combined to create complex messages.
+- **Simplicity**: Reduces ambiguity and facilitates validation.
+- **Scalability**: The vocabulary can evolve without introducing complexity.
+- **Flexibility**: Words can serve as triggers, identifiers, or parts of sequences.
 
 ---
 
@@ -244,6 +281,36 @@ These patterns differ fundamentally from Stage as they focus on specific algorit
    The **Stage Design Pattern** offers a unique solution by combining aspects of centralized control (Mediator) with structured message delivery (Observer) while avoiding the pitfalls of global messaging systems (Messaging Center).
 
 ### Mathematical Model of the Stage Design Pattern
+
+```mermaid
+graph TD
+    %% Definición de nodos
+    subgraph Stage
+        ST["Stage (Central Registry)"]
+    end
+
+    subgraph Listeners
+        L1["Listener 1"]
+        L2["Listener 2"]
+    end
+
+    subgraph Speakers
+        S1["Speaker 1"]
+        S2["Speaker 2"]
+    end
+
+    %% Relaciones principales
+    L1 -->|Registers| ST
+    L2 -->|Registers| ST
+
+    S1 -->|Registers IDs| ST
+    S2 -->|Registers IDs| ST
+
+    %% Relación de Heed (Prestar Atención)
+    L1 -- Heeds --> S1
+    L2 -- Heeds --> S2
+    L2 -- Heeds --> S1
+```
 
 The **Stage Design Pattern** can be analyzed mathematically using concepts from **graph theory** and **parallel communication**. This section demonstrates the formal model, its properties, and the advantages of Stage over similar approaches.
 
